@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using NLog;
 
 namespace SigmarsBoredom
@@ -25,21 +26,32 @@ namespace SigmarsBoredom
                 // Read the board
                 var board = boardReader.ReadBoard();
 
-                // Solve the board
-                _logger.Info("Attempting to solve the board...");
-                var solution = SolveBoard(board);
-
-                // Play the solution
-                if (solution != null)
+                if (board != null)
                 {
-                    _logger.Info("A solution has been found. Attempting to play it...");
-                    PlaySolution(solution);
-                }
-                else
-                {
-                    _logger.Warn("No solution was found for this board! This is alarming! Anyway, moving on to the next game.");
-                }
+                    // Solve the board
+                    _logger.Info("Attempting to solve the board...");
 
+                    // Attemps to run the task, sets a 10 second timeout to avoid unsolvable boards
+                    List<Play> solution = null;
+                    var task = Task.Run(() => SolveBoard(board));
+                    if (task.Wait(TimeSpan.FromSeconds(10)))
+                    {
+                        solution = task.Result; // if the solution is solvable, store the solution in from the task
+                    } else { 
+                        solution = null; // if its not solvable, or timed out, set solution to null
+                    }
+
+                    // Play the solution
+                    if (solution != null)
+                    {
+                        _logger.Info("A solution has been found. Attempting to play it...");
+                        PlaySolution(solution);
+                    }
+                    else
+                    {
+                        _logger.Warn("No solution was found for this board! This is alarming! Anyway, moving on to the next game.");
+                    }
+                }
                 // Start a new round
                 StartNewGame();
             }

@@ -68,16 +68,14 @@ namespace SigmarsBoredom
             }
 
             // Check if the board is valid before returning it
-            ThrowOnInvalidBoard(board);
-            _logger.Info("Successfully read the board.");
-            return board;
+            return ThrowOnInvalidBoard(board);
         }
 
         /// <summary>
         /// Checks the given board to see if it is a valid starting board.
         /// </summary>
         /// <param name="board">Board to check.</param>
-        private void ThrowOnInvalidBoard(Board board)
+        private Board ThrowOnInvalidBoard(Board board)
         {
             int[] counters = new int[Enum.GetValues(typeof(Tile)).Length];
             for (int x = 0; x < board.Tiles.GetLength(0); x++)
@@ -89,20 +87,26 @@ namespace SigmarsBoredom
                 }
             }
 
-            if (counters[(int)Tile.Salt] != 4) throw new Exception("Expected 4 salt.");
-            if (counters[(int)Tile.Air] != 8) throw new Exception("Expected 8 air.");
-            if (counters[(int)Tile.Fire] != 8) throw new Exception("Expected 8 fire.");
-            if (counters[(int)Tile.Water] != 8) throw new Exception("Expected 8 water.");
-            if (counters[(int)Tile.Earth] != 8) throw new Exception("Expected 8 earth.");
-            if (counters[(int)Tile.Quicksilver] != 5) throw new Exception("Expected 5 quicksilvers.");
-            if (counters[(int)Tile.Lead] != 1) throw new Exception("Expected 1 lead.");
-            if (counters[(int)Tile.Tin] != 1) throw new Exception("Expected 1 tin.");
-            if (counters[(int)Tile.Iron] != 1) throw new Exception("Expected 1 iron.");
-            if (counters[(int)Tile.Copper] != 1) throw new Exception("Expected 1 copper.");
-            if (counters[(int)Tile.Silver] != 1) throw new Exception("Expected 1 silver.");
-            if (counters[(int)Tile.Gold] != 1) throw new Exception("Expected 1 gold.");
-            if (counters[(int)Tile.Vitae] != 4) throw new Exception("Expected 4 vitae.");
-            if (counters[(int)Tile.Mors] != 4) throw new Exception("Expected 4 mors.");
+
+            // if incorrect number of tiles are found, return null
+            if (counters[(int)Tile.Salt] != 4) return null;
+            if (counters[(int)Tile.Air] != 8) return null;
+            if (counters[(int)Tile.Fire] != 8) return null;
+            if (counters[(int)Tile.Water] != 8) return null;
+            if (counters[(int)Tile.Earth] != 8) return null;
+            if (counters[(int)Tile.Quicksilver] != 5) return null;
+            if (counters[(int)Tile.Lead] != 1) return null;
+            if (counters[(int)Tile.Tin] != 1) return null;
+            if (counters[(int)Tile.Iron] != 1) return null;
+            if (counters[(int)Tile.Copper] != 1) return null;
+            if (counters[(int)Tile.Silver] != 1) return null;
+            if (counters[(int)Tile.Gold] != 1) return null;
+            if (counters[(int)Tile.Vitae] != 4) return null;
+            if (counters[(int)Tile.Mors] != 4) return null;
+
+            // if its a valid board, return the board
+            _logger.Info("Successfully read the board.");
+            return board;
         }
 
         /// <summary>
